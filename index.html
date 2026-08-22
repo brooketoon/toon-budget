@@ -224,7 +224,7 @@ const COLORS=["#2E7D6F","#4A6FA5","#9A6B3F","#6B5B95","#3F7D8C"];
 
 /* ===================== state ===================== */
 const S={
-  password: localStorage.getItem("ledgerPw") || null,
+  password: true,
   rev: 0,
   config: null,
   ledger: null,
@@ -344,7 +344,7 @@ function render(){
         : (S.tab==="now"?viewNow():S.tab==="budgets"?viewBudgets():S.tab==="year"?viewYear():viewSetup()))+
     '</main>'+
     '<footer class="foot"><span>Shared ledger — both of you see the same numbers. <span id="saveState">Saved</span></span>'+
-    '<span><button class="link" data-act="reload">Reload</button><button class="link" data-act="logout">Sign out</button></span></footer>';
+    '<span><button class="link" data-act="reload">Reload</button></span></footer>';
 }
 
 function renderGate(){
