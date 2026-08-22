@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#17243b">
+<title>Household Budget</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500;6..72,650&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#17243b;
+  --navy-2:#243653;
+  --ink:#1f2a3a;
+  --muted:#697487;
+  --paper:#f4f6f3;
+  --card:#ffffff;
+  --line:#dce2dc;
+  --green:#2d7a68;
+  --green-soft:#e8f3ef;
+  --gold:#9a6b3f;
+  --gold-soft:#f6efe7;
+  --red:#9a5555;
+  --red-soft:#f7eded;
+  --blue-soft:#edf2f8;
+  --shadow:0 8px 24px rgba(23,36,59,.06);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--paper);color:var(--ink)}
+body{font-family:'Inter',system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:15px;line-height:1.5}
+button,input,select{font:inherit}
+button{touch-action:manipulation}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid rgba(45,122,104,.25);outline-offset:2px}
+#app{max-width:1120px;margin:0 auto;padding:18px 14px 48px}
+
+.topbar{
+  background:var(--navy);
+  color:#fff;
+  border-radius:18px;
+  padding:20px;
+  box-shadow:var(--shadow);
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-end;
+  gap:16px;
+  flex-wrap:wrap;
+}
+.brand small{
+  display:block;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:10px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  opacity:.72;
+  margin-bottom:5px;
+}
+.brand h1{
+  font-family:'Newsreader',Georgia,serif;
+  font-size:32px;
+  line-height:1;
+  font-weight:650;
+  margin:0;
+}
+.sync{
+  text-align:right;
+  font-size:12px;
+  opacity:.9;
+}
+.sync strong{
+  display:block;
+  color:#bfe4d8;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:12px;
+  margin-top:3px;
+}
+
+.periodbar{
+  margin-top:14px;
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:12px 14px;
+  display:grid;
+  grid-template-columns:auto 1fr auto;
+  align-items:center;
+  gap:12px;
+  box-shadow:var(--shadow);
+}
+.period-center{text-align:center}
+.period-kicker{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:9.5px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--muted);
+}
+.period-title{
+  font-family:'Newsreader',Georgia,serif;
+  font-size:22px;
+  font-weight:650;
+  margin-top:2px;
+}
+.iconbtn{
+  width:40px;height:40px;border-radius:10px;border:1px solid var(--line);
+  background:#fff;color:var(--ink);cursor:pointer;font-size:18px;
+}
+.todaybtn{
+  display:block;
+  margin:8px auto 0;
+  border:0;background:transparent;color:var(--green);font-size:12px;
+  text-decoration:underline;cursor:pointer;
+}
+
+.notice{
+  margin-top:14px;
+  padding:11px 13px;
+  border-radius:12px;
+  background:#fff5df;
+  border:1px solid #ead6a7;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  font-size:13px;
+}
+.notice.bad{background:var(--red-soft);border-color:#e2c2c2}
+.notice button{border:0;background:transparent;color:var(--muted);text-decoration:underline;cursor:pointer}
+
+.hero{
+  margin-top:14px;
+  background:linear-gradient(135deg,#fff 0%,#f9fbf9 100%);
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:22px;
+  box-shadow:var(--shadow);
+  display:grid;
+  grid-template-columns:1.2fr .8fr;
+  gap:18px;
+}
+.hero-label{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:10px;
+  letter-spacing:.13em;
+  text-transform:uppercase;
+  color:var(--muted);
+}
+.hero-value{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:clamp(42px,8vw,68px);
+  font-weight:600;
+  line-height:1;
+  margin:8px 0 10px;
+  color:var(--green);
+  font-variant-numeric:tabular-nums;
+}
+.hero-value.short{color:var(--red)}
+.hero-explain{font-size:13px;color:var(--muted);max-width:650px}
+.flow{
+  border-radius:14px;
+  background:var(--blue-soft);
+  padding:14px;
+  align-self:stretch;
+}
+.flow h3{
+  font-size:12px;margin:0 0 10px;text-transform:uppercase;
+  letter-spacing:.08em;color:var(--muted);
+}
+.flow-row{
+  display:flex;justify-content:space-between;gap:12px;
+  padding:7px 0;border-bottom:1px solid rgba(23,36,59,.08);
+}
+.flow-row:last-child{border-bottom:0}
+.flow-row strong{font-family:'IBM Plex Mono',monospace;font-size:13px}
+.flow-row.total{font-weight:700;padding-top:10px}
+
+.summary{
+  margin-top:14px;
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:12px;
+}
+.stat{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:14px;
+  box-shadow:var(--shadow);
+}
+.stat-label{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:9.5px;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  color:var(--muted);
+}
+.stat-value{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:23px;
+  font-weight:600;
+  margin-top:5px;
+}
+.stat small{color:var(--muted);font-size:11px}
+.stat.green{border-top:4px solid var(--green)}
+.stat.red{border-top:4px solid var(--red)}
+.stat.gold{border-top:4px solid var(--gold)}
+.stat.navy{border-top:4px solid var(--navy)}
+
+.actions{
+  margin-top:14px;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px;
+}
+.card{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:18px;
+  box-shadow:var(--shadow);
+}
+.card-title{
+  display:flex;justify-content:space-between;align-items:center;gap:10px;
+  margin-bottom:14px;
+}
+.card-title h2{
+  margin:0;
+  font-size:17px;
+  font-weight:700;
+}
+.card-title span{
+  font-size:11px;color:var(--muted);
+}
+.fields{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+.field{display:block;margin-bottom:10px}
+.field.full{grid-column:1/-1}
+.field label{
+  display:block;
+  font-size:11px;
+  font-weight:600;
+  color:var(--muted);
+  margin-bottom:5px;
+}
+input,select{
+  width:100%;
+  border:1px solid var(--line);
+  border-radius:10px;
+  padding:11px 12px;
+  background:#fbfcfb;
+  color:var(--ink);
+  font-size:16px;
+}
+.primary{
+  width:100%;
+  border:0;
+  border-radius:10px;
+  background:var(--navy);
+  color:#fff;
+  padding:12px 14px;
+  font-weight:700;
+  cursor:pointer;
+}
+.primary:hover{background:var(--navy-2)}
+
+.section{
+  margin-top:14px;
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:18px;
+  box-shadow:var(--shadow);
+}
+.section-head{
+  display:flex;justify-content:space-between;align-items:center;gap:12px;
+  margin-bottom:14px;flex-wrap:wrap;
+}
+.section-head h2{font-size:17px;margin:0}
+.section-head p{margin:0;color:var(--muted);font-size:12px}
+
+.buckets{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:12px;
+}
+.bucket{
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:14px;
+  background:#fcfdfc;
+}
+.bucket-name{font-weight:700;font-size:13px}
+.bucket-remaining{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:24px;font-weight:600;margin:5px 0 3px;color:var(--green);
+}
+.bucket-remaining.over{color:var(--red)}
+.bucket-sub{font-size:11px;color:var(--muted)}
+.progress{
+  height:8px;background:#e5e9e5;border-radius:999px;overflow:hidden;margin-top:10px;
+}
+.progress i{display:block;height:100%;background:var(--green)}
+.progress i.over{background:var(--red)}
+
+.two-col{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px;
+}
+.table-wrap{overflow:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+td{padding:9px 6px;border-bottom:1px solid #edf0ed;vertical-align:top}
+td.date{white-space:nowrap;color:var(--muted);font-family:'IBM Plex Mono',monospace;font-size:11px}
+td.money{text-align:right;white-space:nowrap;font-family:'IBM Plex Mono',monospace}
+td.money.good{color:var(--green);font-weight:600}
+td.remove{text-align:right;width:1%}
+.link{
+  border:0;background:transparent;color:var(--muted);text-decoration:underline;cursor:pointer;font-size:11px;
+}
+.tag{
+  display:inline-block;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:8.5px;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  border:1px solid #d6c1aa;
+  color:var(--gold);
+  padding:1px 4px;
+  border-radius:4px;
+  margin-left:4px;
+}
+.total-row td{font-weight:700;border-top:1px solid var(--line);border-bottom:0}
+.empty{color:var(--muted);font-size:13px;padding:6px 0}
+
+.calendar-wrap{margin-top:14px}
+.calendar-head{
+  display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;
+}
+.calendar-head h2{font-family:'Newsreader',Georgia,serif;font-size:24px;margin:0}
+.months{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:10px;
+}
+.month{
+  background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px;
+}
+.month h3{font-size:13px;margin:0 0 7px}
+.dow,.days{display:grid;grid-template-columns:repeat(7,1fr);gap:1px}
+.dow span{font-size:8.5px;color:#9aa39a;text-align:center}
+.day{
+  position:relative;aspect-ratio:1;border:0;background:transparent;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:0;cursor:pointer;border-radius:5px;
+}
+.day.today{background:var(--navy);color:#fff}
+.day.selected{outline:1.5px solid var(--navy)}
+.day.period-start:before{
+  content:"";position:absolute;top:1px;left:3px;right:3px;height:2px;background:var(--green);border-radius:2px;
+}
+.day-n{font-family:'IBM Plex Mono',monospace;font-size:9.5px}
+.marks{height:5px;display:flex;gap:2px;margin-top:2px}
+.dot{width:4px;height:4px;border-radius:50%;background:var(--green)}
+.bar{width:7px;height:2px;background:var(--red);margin-top:1px}
+.footer{
+  display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;
+  color:var(--muted);font-size:11px;margin-top:18px;padding:12px 4px;
+}
+.footer button{border:0;background:transparent;color:var(--muted);text-decoration:underline;cursor:pointer}
+
+.view-tabs{
+  margin-top:14px;
+  display:flex;
+  gap:8px;
+}
+.view-tab{
+  border:1px solid var(--line);
+  background:#fff;
+  color:var(--muted);
+  border-radius:10px;
+  padding:9px 13px;
+  font-size:12px;
+  font-weight:600;
+  cursor:pointer;
+}
+.view-tab.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+
+@media(max-width:900px){
+  .hero{grid-template-columns:1fr}
+  .summary{grid-template-columns:repeat(2,1fr)}
+  .buckets{grid-template-columns:repeat(2,1fr)}
+  .months{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:700px){
+  #app{padding:10px 10px 36px}
+  .topbar{border-radius:14px;padding:16px}
+  .brand h1{font-size:28px}
+  .periodbar{grid-template-columns:42px 1fr 42px}
+  .actions,.two-col{grid-template-columns:1fr}
+  .fields{grid-template-columns:1fr}
+  .field.full{grid-column:auto}
+}
+@media(max-width:480px){
+  .summary,.buckets,.months{grid-template-columns:1fr}
+  .hero-value{font-size:44px}
+}
+</style>
+</head>
+<body>
+<div id="app"><div class="section">Loading shared budget…</div></div>
+
+<script>
+"use strict";
+
+/* =========================================================
+   FIXED BUDGET
+   These amounts are built into the app.
+   ========================================================= */
+
+const BILLS = [
+  {id:"rent",name:"Rent",dueDay:1,amount:1972},
+  {id:"youtube",name:"YouTube Music",dueDay:13,amount:30},
+  {id:"googleone",name:"Google One (Photos)",dueDay:30,amount:10},
+  {id:"disney",name:"Disney+",dueDay:16,amount:10},
+  {id:"peacock",name:"Peacock",dueDay:27,amount:2},
+  {id:"appletv",name:"Apple TV",dueDay:8,amount:13},
+  {id:"netflix",name:"Netflix",dueDay:1,amount:20},
+  {id:"hulu",name:"Hulu",dueDay:4,amount:2.15},
+  {id:"hbo",name:"HBO",dueDay:24,amount:3},
+  {id:"paramount",name:"Paramount",dueDay:17,amount:9},
+  {id:"internet",name:"Internet (Cox)",dueDay:17,amount:70},
+  {id:"electric",name:"Electric (SRP)",dueDay:18,amount:220,estimate:true},
+  {id:"phone",name:"Phone (Google Fi)",dueDay:25,amount:100},
+  {id:"renter",name:"Renter Insurance (SF)",dueDay:8,amount:10},
+  {id:"water",name:"Water / Trash / Sewer",dueDay:8,amount:90},
+  {id:"life",name:"Life Insurance",dueDay:19,amount:127},
+  {id:"gymnastics",name:"Gymnastics",dueDay:20,amount:245},
+  {id:"swimming",name:"Swimming",dueDay:1,amount:0,estimate:true},
+  {id:"529",name:"Fidelity 529 College",dueDay:5,amount:100},
+  {id:"retirement",name:"Retirement",dueDay:2,amount:0,estimate:true},
+  {id:"studentloan",name:"Student Loan",dueDay:15,amount:365}
+];
+
+const BUCKETS = [
+  {id:"gas",name:"Gas",amount:120},
+  {id:"costco",name:"Costco / House",amount:300},
+  {id:"extras",name:"Budgeted Extras",amount:500},
+  {id:"food",name:"Food",amount:600}
+];
+
+const BUCKET_TOTAL = BUCKETS.reduce((sum,b)=>sum+b.amount,0);
+
+const MONTHS=["January","February","March","April","May","June","July","August","September","October","November","December"];
+const MON=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const DOW=["S","M","T","W","T","F","S"];
+
+const iso=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+const parse=s=>{const p=String(s).split("-").map(Number);return new Date(p[0],p[1]-1,p[2])};
+const today=()=>{const d=new Date();return new Date(d.getFullYear(),d.getMonth(),d.getDate())};
+const monthLen=(y,m)=>new Date(y,m+1,0).getDate();
+const money=n=>new Intl.NumberFormat("en-US",{style:"currency",currency:"USD"}).format(Number(n)||0);
+const r2=n=>Math.round((Number(n)||0)*100)/100;
+const fmtDate=d=>MON[d.getMonth()]+" "+d.getDate();
+const fmtLong=d=>MON[d.getMonth()]+" "+d.getDate()+", "+d.getFullYear();
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const uid=p=>p+Date.now()+Math.random().toString(36).slice(2,7);
+
+const S={
+  rev:0,
+  ledger:null,
+  busy:false,
+  note:null,
+  noteBad:false,
+  viewDate:today(),
+  view:"dashboard",
+  year:today().getFullYear(),
+  picked:null
+};
+
+function blankLedger(){
+  return {paychecks:[],draws:[]};
+}
+
+/* ===================== PERIOD LOGIC ===================== */
+
+function periodFor(date){
+  const y=date.getFullYear();
+  const m=date.getMonth();
+  if(date.getDate()<=15){
+    return {
+      key:y+"-"+String(m+1).padStart(2,"0")+"-H1",
+      start:new Date(y,m,1),
+      end:new Date(y,m,16),
+      label:MONTHS[m]+" 1–15, "+y,
+      short:"1–15"
+    };
+  }
+  const last=monthLen(y,m);
+  return {
+    key:y+"-"+String(m+1).padStart(2,"0")+"-H2",
+    start:new Date(y,m,16),
+    end:new Date(y,m+1,1),
+    label:MONTHS[m]+" 16–"+last+", "+y,
+    short:"16–"+last
+  };
+}
+
+function shiftPeriod(date,dir){
+  const p=periodFor(date);
+  if(dir<0){
+    if(p.start.getDate()===16) return new Date(p.start.getFullYear(),p.start.getMonth(),1);
+    return new Date(p.start.getFullYear(),p.start.getMonth()-1,16);
+  }
+  if(p.start.getDate()===1) return new Date(p.start.getFullYear(),p.start.getMonth(),16);
+  return new Date(p.start.getFullYear(),p.start.getMonth()+1,1);
+}
+
+function inPeriod(dateISO,p){
+  const d=parse(dateISO);
+  return d>=p.start && d<p.end;
+}
+
+function billsForPeriod(p){
+  const y=p.start.getFullYear();
+  const m=p.start.getMonth();
+  const len=monthLen(y,m);
+  return BILLS.map(b=>{
+    const d=new Date(y,m,Math.min(b.dueDay,len));
+    return {date:d,bill:b};
+  }).filter(x=>x.date>=p.start&&x.date<p.end)
+    .sort((a,b)=>a.date-b.date);
+}
+
+function periodData(p){
+  const pays=S.ledger.paychecks.filter(x=>inPeriod(x.date,p));
+  const income=r2(pays.reduce((s,x)=>s+Number(x.amount||0),0));
+  const due=billsForPeriod(p);
+  const billTotal=r2(due.reduce((s,x)=>s+Number(x.bill.amount||0),0));
+  const required=r2(billTotal+BUCKET_TOTAL);
+  const available=r2(income-required);
+  return {p,pays,income,due,billTotal,required,available};
+}
+
+function bucketData(p){
+  return BUCKETS.map(b=>{
+    const draws=S.ledger.draws.filter(d=>d.allowanceId===b.id&&inPeriod(d.date,p));
+    const spent=r2(draws.reduce((s,d)=>s+Number(d.amount||0),0));
+    return {bucket:b,draws,spent,remaining:r2(b.amount-spent)};
+  });
+}
+
+/* ===================== SHARED CLOUDFLARE STORAGE ===================== */
+
+async function api(route,payload){
+  try{
+    const res=await fetch("/api/"+route,{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify(payload||{})
+    });
+    const text=await res.text();
+    let data;
+    try{data=JSON.parse(text)}
+    catch{data={error:"The shared storage returned an unreadable response."}}
+    return {ok:res.ok,status:res.status,data};
+  }catch{
+    return {ok:false,status:0,data:{error:"Couldn't reach the shared budget."}};
+  }
+}
+
+function normalize(raw){
+  const oldConfig=raw.config||{};
+  const ledger=Object.assign(blankLedger(),raw.ledger||{});
+  if(!Array.isArray(ledger.paychecks)) ledger.paychecks=[];
+  if(!Array.isArray(ledger.draws)) ledger.draws=[];
+
+  // Migrate older bucket IDs into the fixed bucket names.
+  const oldAllowances=Array.isArray(oldConfig.allowances)?oldConfig.allowances:[];
+  const oldNameById={};
+  oldAllowances.forEach(a=>oldNameById[a.id]=String(a.name||"").toLowerCase());
+
+  function canonical(name){
+    const n=String(name||"").toLowerCase();
+    if(n.includes("gas")) return "gas";
+    if(n.includes("costco")||n.includes("house")) return "costco";
+    if(n.includes("extra")) return "extras";
+    if(n.includes("food")) return "food";
+    return null;
+  }
+
+  ledger.draws=ledger.draws.map(d=>{
+    if(BUCKETS.some(b=>b.id===d.allowanceId)) return d;
+    const mapped=canonical(oldNameById[d.allowanceId]);
+    return mapped?Object.assign({},d,{allowanceId:mapped}):d;
+  });
+
+  return ledger;
+}
+
+async function load(quiet=false){
+  const r=await api("load");
+  if(!r.ok){
+    S.note=r.data.error||"Couldn't reach the shared budget.";
+    S.noteBad=true;
+    if(!quiet) render();
+    return;
+  }
+  S.rev=Number(r.data.rev||0);
+  S.ledger=normalize(r.data||{});
+  if(!quiet) render();
+}
+
+let saveTimer=null;
+
+async function save(){
+  S.busy=true;
+  paintBusy();
+
+  const fixedConfig={
+    version:5,
+    mode:"semi-monthly",
+    bills:BILLS,
+    allowances:BUCKETS
+  };
+
+  const r=await api("save",{
+    rev:S.rev,
+    config:fixedConfig,
+    ledger:S.ledger
+  });
+
+  S.busy=false;
+
+  if(r.status===409){
+    S.rev=Number(r.data.rev||0);
+    S.ledger=normalize(r.data||{});
+    S.note=r.data.message||"The other device saved first, so this view was refreshed.";
+    S.noteBad=true;
+    render();
+    return;
+  }
+
+  if(!r.ok){
+    S.note=r.data.error||"That didn't save.";
+    S.noteBad=true;
+    render();
+    return;
+  }
+
+  S.rev=Number(r.data.rev||S.rev+1);
+  paintBusy();
+}
+
+function commit(){
+  render();
+  clearTimeout(saveTimer);
+  saveTimer=setTimeout(save,250);
+}
+
+function paintBusy(){
+  const e=document.getElementById("saveState");
+  if(e) e.textContent=S.busy?"Saving…":"Saved";
+}
+
+/* ===================== DASHBOARD ===================== */
+
+const app=document.getElementById("app");
+
+function render(){
+  if(!S.ledger){
+    app.innerHTML='<div class="section">Loading shared budget…</div>';
+    return;
+  }
+
+  const p=periodFor(S.viewDate);
+
+  app.innerHTML=
+    '<header class="topbar">'+
+      '<div class="brand"><small>Household Ledger</small><h1>Household Budget</h1></div>'+
+      '<div class="sync">Shared between both devices<strong id="saveState">'+(S.busy?"Saving…":"Saved")+'</strong></div>'+
+    '</header>'+
+
+    '<div class="periodbar">'+
+      '<button class="iconbtn" data-act="prevPeriod" aria-label="Previous period">‹</button>'+
+      '<div class="period-center"><div class="period-kicker">Budget period</div><div class="period-title">'+esc(p.label)+'</div>'+
+        (periodFor(today()).key!==p.key?'<button class="todaybtn" data-act="todayPeriod">Return to current period</button>':'')+
+      '</div>'+
+      '<button class="iconbtn" data-act="nextPeriod" aria-label="Next period">›</button>'+
+    '</div>'+
+
+    '<div class="view-tabs">'+
+      '<button class="view-tab '+(S.view==="dashboard"?'active':'')+'" data-act="view" data-v="dashboard">Dashboard</button>'+
+      '<button class="view-tab '+(S.view==="calendar"?'active':'')+'" data-act="view" data-v="calendar">Year calendar</button>'+
+    '</div>'+
+
+    (S.note?'<div class="notice '+(S.noteBad?'bad':'')+'"><span>'+esc(S.note)+'</span><button data-act="clearNote">Dismiss</button></div>':'')+
+
+    (S.view==="dashboard"?dashboardHTML(p):calendarHTML())+
+
+    '<footer class="footer"><span>Bills, due dates, and bucket amounts are built in. You only enter actual income and expenses.</span>'+
+      '<button data-act="reload">Reload shared data</button></footer>';
+}
+
+function dashboardHTML(p){
+  const d=periodData(p);
+  const buckets=bucketData(p);
+  const positive=d.available>=0;
+
+  const heroLabel=positive?"Safe to move to savings":"Still needed to fund this period";
+  const heroText=positive
+    ? "All bills due in this half of the month and all four spending buckets are already reserved."
+    : "Income entered so far does not yet cover the bills and full spending buckets for this period.";
+
+  return ''+
+    '<section class="hero">'+
+      '<div>'+
+        '<div class="hero-label">'+heroLabel+'</div>'+
+        '<div class="hero-value '+(positive?'':'short')+'">'+money(Math.abs(d.available))+'</div>'+
+        '<div class="hero-explain">'+heroText+' This number changes immediately whenever either of you adds another paycheck.</div>'+
+      '</div>'+
+      '<div class="flow">'+
+        '<h3>Where the money goes</h3>'+
+        '<div class="flow-row"><span>Actual income entered</span><strong>'+money(d.income)+'</strong></div>'+
+        '<div class="flow-row"><span>Bills due this period</span><strong>− '+money(d.billTotal)+'</strong></div>'+
+        '<div class="flow-row"><span>Spending buckets</span><strong>− '+money(BUCKET_TOTAL)+'</strong></div>'+
+        '<div class="flow-row total"><span>'+(positive?'Available for savings':'Amount still needed')+'</span><strong>'+money(Math.abs(d.available))+'</strong></div>'+
+      '</div>'+
+    '</section>'+
+
+    '<div class="summary">'+
+      statCard("Income received",money(d.income),d.pays.length+" paycheck"+(d.pays.length===1?"":"s")+" entered","green")+
+      statCard("Bills reserved",money(d.billTotal),d.due.length+" bills due "+p.short,"red")+
+      statCard("Buckets funded",money(BUCKET_TOTAL),"Gas · Costco · Extras · Food","gold")+
+      statCard("Total needed",money(d.required),"Before anything goes to savings","navy")+
+    '</div>'+
+
+    '<div class="actions">'+
+      incomeCard()+
+      expenseCard()+
+    '</div>'+
+
+    '<section class="section">'+
+      '<div class="section-head"><div><h2>Spending buckets</h2><p>These reset automatically on the 1st and 16th.</p></div>'+
+      '<p>'+money(BUCKET_TOTAL)+' reserved this period</p></div>'+
+      '<div class="buckets">'+buckets.map(bucketCard).join("")+'</div>'+
+    '</section>'+
+
+    '<div class="two-col" style="margin-top:14px">'+
+      billsPanel(d)+
+      activityPanel(d,p)+
+    '</div>';
+}
+
+function statCard(label,value,sub,cls){
+  return '<div class="stat '+cls+'"><div class="stat-label">'+label+'</div><div class="stat-value">'+value+'</div><small>'+sub+'</small></div>';
+}
+
+function incomeCard(){
+  return '<section class="card">'+
+    '<div class="card-title"><h2>+ Add income</h2><span>Enter the exact deposit</span></div>'+
+    '<div class="fields">'+
+      '<div class="field"><label>Amount received</label><input id="incomeAmount" type="number" step="0.01" inputmode="decimal" placeholder="0.00"></div>'+
+      '<div class="field"><label>Date received</label><input id="incomeDate" type="date" value="'+iso(today())+'"></div>'+
+      '<div class="field full"><label>Label (optional)</label><input id="incomeLabel" type="text" placeholder="Brooke paycheck, Elias paycheck, bonus…"></div>'+
+    '</div>'+
+    '<button class="primary" data-act="addIncome">Add income and recalculate</button>'+
+  '</section>';
+}
+
+function expenseCard(){
+  return '<section class="card">'+
+    '<div class="card-title"><h2>− Add bucket expense</h2><span>Reduces that bucket only</span></div>'+
+    '<div class="fields">'+
+      '<div class="field"><label>Bucket</label><select id="expenseBucket">'+BUCKETS.map(b=>'<option value="'+b.id+'">'+esc(b.name)+'</option>').join("")+'</select></div>'+
+      '<div class="field"><label>Amount spent</label><input id="expenseAmount" type="number" step="0.01" inputmode="decimal" placeholder="0.00"></div>'+
+      '<div class="field"><label>Date</label><input id="expenseDate" type="date" value="'+iso(today())+'"></div>'+
+      '<div class="field"><label>Note (optional)</label><input id="expenseNote" type="text" placeholder="Groceries, gas, Costco…"></div>'+
+    '</div>'+
+    '<button class="primary" data-act="addExpense">Add expense</button>'+
+  '</section>';
+}
+
+function bucketCard(x){
+  const start=x.bucket.amount;
+  const remaining=x.remaining;
+  const pct=start>0?Math.max(0,Math.min(100,(remaining/start)*100)):0;
+  return '<div class="bucket">'+
+    '<div class="bucket-name">'+esc(x.bucket.name)+'</div>'+
+    '<div class="bucket-remaining '+(remaining<0?'over':'')+'">'+money(remaining)+'</div>'+
+    '<div class="bucket-sub">'+money(x.spent)+' spent of '+money(start)+'</div>'+
+    '<div class="progress"><i class="'+(remaining<0?'over':'')+'" style="width:'+pct+'%"></i></div>'+
+  '</div>';
+}
+
+function billsPanel(d){
+  const rows=d.due.map(x=>
+    '<tr><td class="date">'+fmtDate(x.date)+'</td><td>'+esc(x.bill.name)+(x.bill.estimate?' <span class="tag">estimate</span>':'')+'</td><td class="money">'+money(x.bill.amount)+'</td></tr>'
+  ).join("");
+
+  return '<section class="section" style="margin-top:0">'+
+    '<div class="section-head"><div><h2>Bills automatically reserved</h2><p>No bill entry needed.</p></div><p>'+money(d.billTotal)+'</p></div>'+
+    '<div class="table-wrap"><table><tbody>'+rows+
+      '<tr class="total-row"><td></td><td>Total bills</td><td class="money">'+money(d.billTotal)+'</td></tr>'+
+    '</tbody></table></div>'+
+  '</section>';
+}
+
+function activityPanel(d,p){
+  const incomes=d.pays.slice().sort((a,b)=>parse(b.date)-parse(a.date));
+  const expenses=S.ledger.draws.filter(x=>inPeriod(x.date,p)).sort((a,b)=>parse(b.date)-parse(a.date));
+  const bucketName=id=>(BUCKETS.find(b=>b.id===id)||{name:"Bucket"}).name;
+
+  const items=[
+    ...incomes.map(x=>({type:"income",date:x.date,label:x.streamName||x.label||"Income",amount:x.amount,id:x.id})),
+    ...expenses.map(x=>({type:"expense",date:x.date,label:(x.what||"Expense")+" · "+bucketName(x.allowanceId),amount:x.amount,id:x.id}))
+  ].sort((a,b)=>parse(b.date)-parse(a.date));
+
+  const rows=items.map(x=>
+    '<tr><td class="date">'+fmtDate(parse(x.date))+'</td><td>'+esc(x.label)+'</td>'+
+    '<td class="money '+(x.type==="income"?'good':'')+'">'+(x.type==="income"?"+ ":"− ")+money(x.amount)+'</td>'+
+    '<td class="remove"><button class="link" data-act="'+(x.type==="income"?"delIncome":"delExpense")+'" data-v="'+x.id+'">Remove</button></td></tr>'
+  ).join("");
+
+  return '<section class="section" style="margin-top:0">'+
+    '<div class="section-head"><div><h2>Activity this period</h2><p>Everything either of you entered.</p></div></div>'+
+    (rows?'<div class="table-wrap"><table><tbody>'+rows+'</tbody></table></div>':'<div class="empty">Nothing entered for this period yet.</div>')+
+  '</section>';
+}
+
+/* ===================== CALENDAR ===================== */
+
+function billMapForYear(y){
+  const map={};
+  for(let m=0;m<12;m++){
+    const len=monthLen(y,m);
+    BILLS.forEach(b=>{
+      const k=iso(new Date(y,m,Math.min(b.dueDay,len)));
+      (map[k]=map[k]||[]).push(b);
+    });
+  }
+  return map;
+}
+
+function calendarHTML(){
+  const y=S.year;
+  const bills=billMapForYear(y);
+  const payMap={};
+  S.ledger.paychecks.filter(x=>parse(x.date).getFullYear()===y).forEach(x=>{
+    (payMap[x.date]=payMap[x.date]||[]).push(x);
+  });
+
+  let html='<section class="section calendar-wrap">'+
+    '<div class="calendar-head"><button class="iconbtn" data-act="prevYear">‹</button><h2>'+y+'</h2><button class="iconbtn" data-act="nextYear">›</button></div>'+
+    '<div class="months">';
+
+  for(let m=0;m<12;m++){
+    const len=monthLen(y,m);
+    const lead=new Date(y,m,1).getDay();
+    html+='<div class="month"><h3>'+MONTHS[m]+'</h3><div class="dow">'+DOW.map(d=>'<span>'+d+'</span>').join("")+'</div><div class="days">';
+    for(let i=0;i<lead;i++) html+='<span class="day"></span>';
+    for(let d=1;d<=len;d++){
+      const k=iso(new Date(y,m,d));
+      html+='<button class="day '+(k===iso(today())?'today ':'')+(S.picked===k?'selected ':'')+((d===1||d===16)?'period-start ':'')+'" data-act="pickDay" data-v="'+k+'">'+
+        '<span class="day-n">'+d+'</span><span class="marks">'+
+        (payMap[k]?'<i class="dot"></i>':'')+(bills[k]?'<i class="bar"></i>':'')+
+        '</span></button>';
+    }
+    html+='</div></div>';
+  }
+  html+='</div>';
+
+  if(S.picked){
+    const dayBills=bills[S.picked]||[];
+    const dayPays=payMap[S.picked]||[];
+    html+='<div class="section" style="margin-top:14px"><div class="section-head"><h2>'+fmtLong(parse(S.picked))+'</h2></div>';
+    if(!dayBills.length&&!dayPays.length){
+      html+='<div class="empty">Nothing due or recorded on this date.</div>';
+    }else{
+      dayPays.forEach(x=>html+='<div class="flow-row"><span>Income · '+esc(x.streamName||x.label||"Paycheck")+'</span><strong>'+money(x.amount)+'</strong></div>');
+      dayBills.forEach(x=>html+='<div class="flow-row"><span>Bill · '+esc(x.name)+'</span><strong>'+money(x.amount)+'</strong></div>');
+    }
+    html+='</div>';
+  }
+
+  html+='</section>';
+  return html;
+}
+
+/* ===================== EVENTS ===================== */
+
+const val=id=>{const e=document.getElementById(id);return e?e.value:""};
+
+document.addEventListener("click",e=>{
+  const el=e.target.closest("[data-act]");
+  if(!el) return;
+  const act=el.dataset.act;
+  const v=el.dataset.v;
+
+  if(act==="prevPeriod"){S.viewDate=shiftPeriod(S.viewDate,-1);render();return}
+  if(act==="nextPeriod"){S.viewDate=shiftPeriod(S.viewDate,1);render();return}
+  if(act==="todayPeriod"){S.viewDate=today();render();return}
+  if(act==="view"){S.view=v;render();return}
+  if(act==="clearNote"){S.note=null;S.noteBad=false;render();return}
+  if(act==="reload"){load();return}
+  if(act==="prevYear"){S.year--;S.picked=null;render();return}
+  if(act==="nextYear"){S.year++;S.picked=null;render();return}
+  if(act==="pickDay"){S.picked=S.picked===v?null:v;render();return}
+
+  if(act==="addIncome"){
+    const amount=Number(val("incomeAmount")||0);
+    const date=val("incomeDate")||iso(today());
+    const label=(val("incomeLabel")||"Paycheck").trim();
+
+    if(!(amount>0)){
+      S.note="Enter the exact amount that was deposited.";
+      S.noteBad=true;
+      render();
+      return;
+    }
+
+    S.ledger.paychecks.unshift({
+      id:uid("p"),
+      date,
+      amount:r2(amount),
+      streamName:label
+    });
+
+    S.ledger.paychecks=S.ledger.paychecks.slice(0,800);
+    S.viewDate=parse(date);
+    S.note="Income added. Bills, bucket funding, and savings were recalculated automatically.";
+    S.noteBad=false;
+    commit();
+    return;
+  }
+
+  if(act==="addExpense"){
+    const amount=Number(val("expenseAmount")||0);
+    const date=val("expenseDate")||iso(today());
+
+    if(!(amount>0)){
+      S.note="Enter the exact amount spent.";
+      S.noteBad=true;
+      render();
+      return;
+    }
+
+    S.ledger.draws.unshift({
+      id:uid("d"),
+      allowanceId:val("expenseBucket"),
+      date,
+      amount:r2(amount),
+      what:(val("expenseNote")||"Expense").trim()
+    });
+
+    S.ledger.draws=S.ledger.draws.slice(0,2000);
+    S.viewDate=parse(date);
+    S.note="Expense added. The remaining balance in that bucket was updated.";
+    S.noteBad=false;
+    commit();
+    return;
+  }
+
+  if(act==="delIncome"){
+    S.ledger.paychecks=S.ledger.paychecks.filter(x=>x.id!==v);
+    S.note="Income entry removed.";
+    S.noteBad=false;
+    commit();
+    return;
+  }
+
+  if(act==="delExpense"){
+    S.ledger.draws=S.ledger.draws.filter(x=>x.id!==v);
+    S.note="Expense entry removed.";
+    S.noteBad=false;
+    commit();
+    return;
+  }
+});
+
+/* ===================== START ===================== */
+
+(async function(){
+  await load();
+
+  setInterval(async()=>{
+    if(S.busy||document.hidden) return;
+    const before=S.rev;
+    await load(true);
+    if(S.rev!==before) render();
+  },15000);
+})();
+</script>
+</body>
+</html>
